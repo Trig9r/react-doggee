@@ -1,13 +1,14 @@
 import React from 'react';
+import { Routes } from 'react-router-dom';
 
-import { LoginPage } from './pages/LoginPage';
+import { AuthRoutes, MainRoutes } from '@routes/routesConfig';
 
 import './App.css';
 
 function App() {
-  return (
-    <LoginPage />
-  );
+  const [isAuth, setAuth] = React.useState(false);
+
+  return isAuth ? <MainRoutes /> : <AuthRoutes />;
 }
 
 export default App;

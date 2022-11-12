@@ -1,7 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Input } from '@/components/Input';
-import { Button } from '@/components/Button';
+import { Input, PasswordInput, Button, CheckBox } from '@components/UI';
+import { useMutation, useQuery, useQueryLazy } from '@utils';
 
 import styles from './LoginPage.module.css';
 
@@ -10,22 +11,48 @@ const validateLoginForm = (name: string, value: string) => {
   return null;
 };
 
+interface User {
+  username: string;
+  password: string;
+  id: string;
+}
+
 export const LoginPage = () => {
-  const [formValues, setFormValues] = React.useState({ username: '', password: '' });
+  const navigate = useNavigate();
+  const [formValues, setFormValues] = React.useState({
+    username: '',
+    password: '',
+    notMyComputer: false,
+  });
   const [formErrors, setFormErrors] = React.useState<{ [key: string]: string | null }>({
     username: null,
     password: null,
   });
 
+  const { mutation: authMutation, isLoading: authLoading } = useMutation<typeof formValues, User>(
+    'http://localhost:3001/auth',
+    'post',
+  );
+
+  const { query } = useQueryLazy<User>('http://localhost:3001/users');
+
   return (
     <div className={styles.page}>
       <div className={styles.container}>
         <div className={styles.header}>DOGGEE</div>
-        <div className={styles.form_container}>
+        <form
+          className={styles.form_container}
+          onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            // const res = await authMutation(formValues);
+            const res = await query();
+            console.log(res.data);
+          }}>
           <div className={styles.input_container}>
             <Input
               value={formValues.username}
-              placeholder="username"
+              label="username"
+              disabled={authLoading}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
                 setFormValues({ ...formValues, username: value });
@@ -39,10 +66,10 @@ export const LoginPage = () => {
             />
           </div>
           <div className={styles.input_container}>
-            <Input
-              type="password"
+            <PasswordInput
               value={formValues.password}
-              placeholder="password"
+              label="password"
+              disabled={authLoading}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
                 setFormValues({ ...formValues, password: value });
@@ -55,11 +82,26 @@ export const LoginPage = () => {
               })}
             />
           </div>
-          <div>
-            <Button>Sign in</Button>
+          <div className={styles.input_container}>
+            <CheckBox
+              disabled={authLoading}
+              checked={formValues.notMyComputer}
+              label="This is not my device"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const value = e.target.checked;
+                setFormValues({ ...formValues, notMyComputer: value });
+              }}
+            />
           </div>
+          <div>
+            <Button isLoading={authLoading} type="submit">
+              Sign in
+            </Button>
+          </div>
+        </form>
+        <div className={styles.sign_up} onClick={() => navigate('/registration')}>
+          Create new account
         </div>
-        <div className={styles.sign_up}>Create new account</div>
       </div>
     </div>
   );

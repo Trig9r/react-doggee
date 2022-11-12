@@ -1,0 +1,64 @@
+.input_container {
+  position: relative;
+  background: #EDEDED;
+  border-radius: 5px;
+  width: 100%;
+  padding: 20px 15px 9px;
+  height: 48px;
+  cursor: text;
+}
+
+.input_container:hover {
+  background-color: rgba(237, 237, 237, .7);
+}
+
+.input_label {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  color: rgba(0, 0, 0, .5);
+  z-index: 1;
+  transition: transform 150ms ease-out, font-size 150ms ease-out;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.input:focus ~ .input_label{
+  transform: translate(-10%,-80%);
+  font-size: 10px;
+}
+
+.input:not([value = '']) ~ .input_label{
+  transform: translate(-10%,-80%);
+  font-size: 10px;
+}
+
+.input {
+  width: 100%;
+  border: none;
+  color: #0a0a0a;
+  font-size: 12px;
+  background-color: transparent;
+  padding-right: 15px;
+}
+
+.input:active, 
+.input:focus {
+  outline: none;
+  caret-color: #0a0a0a;
+}
+
+.helper_text {
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 14px;
+  color: #db3939;
+  padding-left: 10px;
+}
+
+.password_toggle_container {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  cursor: pointer;
+}

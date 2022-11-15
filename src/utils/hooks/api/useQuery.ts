@@ -1,10 +1,6 @@
 import React from "react";
 
-export const useQuery = <K>(
-  url:string,
-  deps: React.DependencyList = [],
-  config?: Omit<RequestInit, 'method'>
-  ) => {
+export const useQuery = <K>(request: <T>() => Promise<any>, deps: React.DependencyList = []) => {
   const [isLoading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
   const [status, setStatus] = React.useState(0);
@@ -13,24 +9,14 @@ export const useQuery = <K>(
   React.useEffect(() => {    
     setLoading(true);
     try {
-      fetch(url, {
-        method: "GET",
-        ...config,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(!!config?.headers && config.headers)
-        },
-      }).then(async (res) => {
-        const resData = await res.json() as K;      
+      request<K>().then(async (res) => {
         setLoading(false);
         setStatus(res.status);
-        setData(resData);
+        setData(res.data);
       });
     } catch (err) {
       setLoading(false);
       setError((err as Error).message);
-    } finally {
-      setLoading(false);
     }
   }, deps);
 

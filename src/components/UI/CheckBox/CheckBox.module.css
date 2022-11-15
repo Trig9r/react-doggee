@@ -18,7 +18,7 @@
   cursor: pointer;
   width: 15px;
   height: 15px;
-  border: 2px solid var(--primary7);
+  border: 2px solid var(--color-accent7);
   background: transparent;
   border-radius: 5px;
   margin-right: 5px;
@@ -26,7 +26,7 @@
 }
 
 .custom_checkbox:hover {
-  border: 2px solid var(--pramary);
+  border: 2px solid var(--color-accent);
 }
 
 .checkbox:checked ~ .custom_checkbox {

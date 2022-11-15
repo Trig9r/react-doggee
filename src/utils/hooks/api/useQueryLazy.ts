@@ -1,9 +1,6 @@
 import React from "react";
 
-export const useQueryLazy = <K>(
-  url:string,
-  config?: Omit<RequestInit, 'method'>
-  ) => {
+export const useQueryLazy = <K>(request: <T>() => Promise<any>) => {
   const [isLoading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
   const [status, setStatus] = React.useState(0);
@@ -12,23 +9,15 @@ export const useQueryLazy = <K>(
   const query = React.useCallback(async(): Promise<ApiResponse<K>> => {
     setLoading(true);
     try {
-      const res = await fetch(url, {
-        method: "GET",
-        ...config,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(!!config?.headers && config.headers)
-        },
+      return await request<K>().then(async (res) => {
+        setStatus(res.status);
+        setLoading(false);
+        return res.data;
       });
-      setLoading(false);
-      setStatus(res.status);
-      return await res.json();
     } catch (err) {
       setLoading(false);
       setError((err as Error).message);
       return { success: false, data: {message: (err as Error).message } }
-    } finally {
-      setLoading(false);
     }
   }, []);
 

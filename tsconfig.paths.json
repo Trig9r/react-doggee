@@ -6,7 +6,10 @@
       "@pages/*": ["./pages/*"],
       "@static/*": ["./static/*"],
       "@routes/*": ["./routes/*"],
-      "@utils": ["./utils"]
+      "@utils/api": ["./utils/api/"],
+      "@utils/contexts": ["./utils/contexts/"],
+      "@utils/helpers": ["./utils/helpers/"],
+      "@utils/hooks": ["./utils/hooks/"]
     }
   }
 }

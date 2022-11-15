@@ -9,18 +9,24 @@
 }
 
 .input_container:hover {
-  background-color: rgba(237, 237, 237, .7);
+  background-color: var(--background-color-field);
+}
+
+.input_container:disabled {
+  background-color: #EDEDED;
 }
 
 .input_label {
   position: absolute;
   left: 15px;
   top: 15px;
-  color: rgba(0, 0, 0, .5);
+  color: var(--color-placeholder);
   z-index: 1;
   transition: transform 150ms ease-out, font-size 150ms ease-out;
   font-size: 14px;
   text-transform: capitalize;
+  cursor: text;
+  user-select: none;
 }
 
 .input:focus ~ .input_label{
@@ -36,7 +42,7 @@
 .input {
   width: 100%;
   border: none;
-  color: #0a0a0a;
+  color: var(--color-text);
   font-size: 12px;
   background-color: transparent;
   padding-right: 15px;
@@ -52,7 +58,7 @@
   font-size: 12px;
   font-weight: 300;
   line-height: 14px;
-  color: #db3939;
+  color: var(--color-text-validation);
   padding-left: 10px;
 }
 

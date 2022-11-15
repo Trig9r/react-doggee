@@ -2,7 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Input, PasswordInput, Button, CheckBox } from '@components/UI';
-import { useMutation, useQuery, useQueryLazy } from '@utils';
+import { useMutation, useQuery, useQueryLazy } from '@utils/hooks';
+import { setCookie } from '@utils/helpers';
+import { IntlContext } from '@utils/contexts';
+import { api } from '@utils/api';
 
 import styles from './LoginPage.module.css';
 
@@ -18,11 +21,14 @@ interface User {
 }
 
 export const LoginPage = () => {
+  const intl = React.useContext(IntlContext);
+  console.log(intl);
+
   const navigate = useNavigate();
   const [formValues, setFormValues] = React.useState({
     username: '',
     password: '',
-    notMyComputer: false,
+    isNotMyDevice: false,
   });
   const [formErrors, setFormErrors] = React.useState<{ [key: string]: string | null }>({
     username: null,
@@ -30,11 +36,12 @@ export const LoginPage = () => {
   });
 
   const { mutation: authMutation, isLoading: authLoading } = useMutation<typeof formValues, User>(
-    'http://localhost:3001/auth',
-    'post',
+    (values) => api.post('auth', values),
   );
 
-  const { query } = useQueryLazy<User>('http://localhost:3001/users');
+  // const { isLoading, data } = useQuery<User[]>(() => api.get('users'));
+  const { query } = useQueryLazy<User[]>(() => api.get('users'));
+  //console.log('users', query);
 
   return (
     <div className={styles.page}>
@@ -44,9 +51,12 @@ export const LoginPage = () => {
           className={styles.form_container}
           onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            // const res = await authMutation(formValues);
-            const res = await query();
-            console.log(res.data);
+            const res = await authMutation(formValues);
+            if (res.success && formValues.isNotMyDevice) {
+              setCookie('doggee-isNotMyDevice', new Date().getTime() + 30 * 60000);
+            }
+            // const res = await query();
+            console.log(res);
           }}>
           <div className={styles.input_container}>
             <Input
@@ -85,11 +95,11 @@ export const LoginPage = () => {
           <div className={styles.input_container}>
             <CheckBox
               disabled={authLoading}
-              checked={formValues.notMyComputer}
+              checked={formValues.isNotMyDevice}
               label="This is not my device"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.checked;
-                setFormValues({ ...formValues, notMyComputer: value });
+                setFormValues({ ...formValues, isNotMyDevice: value });
               }}
             />
           </div>
